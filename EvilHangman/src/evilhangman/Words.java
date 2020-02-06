@@ -1,4 +1,4 @@
-package hangman;
+package evilhangman;
 
 import java.io.File;
 import java.io.IOException;

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hangman;
+package evilhangman;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,15 +14,18 @@ import java.util.Scanner;
  *
  * @author ishanmadan
  */
-public class Hangman {
+public class EvilHangman {
     private static Figure figure = new Figure();
     private static Words words = new Words();
     private static Scanner input = new Scanner(System.in);
     
     private static int stage;
     private static String word;
+    private static ArrayList<String> wordList = new ArrayList<String>();
     private static ArrayList<String> usedLetters = new ArrayList<String>();
     private static List<String> resultLetters = new ArrayList<String>();
+
+    private static final int wordCount = 20;
 
     /**
      * @param args the command line arguments
@@ -34,19 +37,71 @@ public class Hangman {
 
         while (run) {
             stage = 0;
-            word = words.getRandomWord();
             
             usedLetters.clear();
             resultLetters.clear();
-            String[] wordLetters = word.split("");
+            wordList.clear();
+            String[] wordLetters;
 
-            for (int i = 0; i < word.length(); i++) {
-                resultLetters.add("_");
+            for (int i = 0; i < wordCount; i++) {
+                String newWord = words.getRandomWord();
+                while (wordList.indexOf(newWord) != -1) {
+                    newWord = words.getRandomWord();
+                }
+                wordList.add(newWord);
+            }
+            
+            while (wordList.size() > 1) {
+                System.out.println("Guess a letter:");
+                String guess = input.nextLine().toLowerCase().replaceAll("[^abcdefghijklmnopqrstuvwxyz]", "");
+                
+                while (guess.length() != 1) {
+                    System.out.println("I'm sorry, that's not a valid guess. Please try again:");
+                    guess = input.nextLine().toLowerCase().replaceAll("[^abcdefghijklmnopqrstuvwxyz]", "");
+                }
+
+                int i = 0;
+                while (wordList.size() > 1 && i < wordList.size()) {
+                    boolean containsLetter = false;
+                    String checkWord = wordList.get(i);
+                    for (int j = 0; j < checkWord.length(); j++) {
+                        if (checkWord.substring(j,j+1).equals(guess)) {
+                            containsLetter = true;
+                        }
+                    }
+                    if (containsLetter) {
+                        wordList.remove(i);
+                    } else {
+                        i++;
+                    }
+                }
+
+                usedLetters.add(guess);
+
+                if (wordList.size() == 1) {
+                    word = wordList.get(0);
+                    wordLetters = word.split("");
+
+                    for (int j = 0; j < word.length(); j++) {
+                        resultLetters.add("_");
+                    }
+
+                    for (int j = 0; j < wordLetters.length; j++) {
+                        if (wordLetters[j].equals(guess)) {
+                            resultLetters.set(j, guess);
+                        }
+                    }
+                } else {
+                    evilPrint();
+                }
+                
+                stage++;
             }
 
             print();
-            
+
             while (gameOver() == 0) {
+                wordLetters = word.split("");
                 System.out.println("Guess a letter (or the word):");
                 String guess = input.nextLine().toLowerCase().replaceAll("[^abcdefghijklmnopqrstuvwxyz]", "");
                 
@@ -104,7 +159,7 @@ public class Hangman {
             }
         }
     }
-
+    
     public static int gameOver() {
         int game = 1;
         for (String letter : resultLetters) {
@@ -118,6 +173,15 @@ public class Hangman {
         }
 
         return game;
+    }
+
+    public static void evilPrint() {
+        System.out.println(figure.print(stage));
+
+        System.out.println("Used Letters:");
+        for (String letter : usedLetters) {
+            System.out.println(letter);
+        }
     }
 
     public static void print() {
