@@ -1,5 +1,6 @@
 package hangman;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
@@ -7,22 +8,31 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Words {
-    private Path path = FileSystems.getDefault().getPath(System.getProperty("user.home"), "apcs", "apcs_Hangman", "Hangman", "dictionary.txt");
+    private Path path;
     private String wordList;
     private String[] words;
-    
+
     public Words() {
+
+        FindFile ff = new FindFile();
+        path = ff.findFile("dictionary.txt", new File("hangman"));
+
         try {
             wordList = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            System.out.println("Reading the file failed: \n" + e);
+        } catch (final IOException e) {
+            System.out.println("Reading the file failed:\n" + e);
         }
-        
         words = wordList.split(",");
     }
 
     public String getRandomWord() {
-        int index = (int)(Math.random() * words.length);
-        return words[index];
+        int index = 0;
+        String word = "";
+        while (word.length() < 3) {
+            index = (int)(Math.random() * words.length);
+            word = words[index];
+        }
+
+        return word;
     }
 }
