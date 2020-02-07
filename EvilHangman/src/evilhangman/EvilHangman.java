@@ -25,7 +25,7 @@ public class EvilHangman {
     private static ArrayList<String> usedLetters = new ArrayList<String>();
     private static List<String> resultLetters = new ArrayList<String>();
 
-    private static final int wordCount = 20;
+    // private static final int wordCount = 20;
 
     /**
      * @param args the command line arguments
