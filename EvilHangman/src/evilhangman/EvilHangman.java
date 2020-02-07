@@ -43,16 +43,20 @@ public class EvilHangman {
             wordList.clear();
             String[] wordLetters;
 
-            for (int i = 0; i < wordCount; i++) {
+            /* for (int i = 0; i < wordCount; i++) {
                 String newWord = words.getRandomWord();
                 while (wordList.indexOf(newWord) != -1) {
                     newWord = words.getRandomWord();
                 }
                 wordList.add(newWord);
+            } */
+
+            for (String newWord : words.getWordList()) {
+                wordList.add(newWord);
             }
             
-            while (wordList.size() > 1) {
-                System.out.println("Guess a letter:");
+            while (wordList.size() > 1 && gameOver() != 2) {
+                System.out.println("\nGuess a letter:");
                 String guess = input.nextLine().toLowerCase().replaceAll("[^abcdefghijklmnopqrstuvwxyz]", "");
                 
                 while (guess.length() != 1) {
@@ -98,9 +102,8 @@ public class EvilHangman {
                 stage++;
             }
 
-            print();
-
             while (gameOver() == 0) {
+                print();
                 wordLetters = word.split("");
                 System.out.println("Guess a letter (or the word):");
                 String guess = input.nextLine().toLowerCase().replaceAll("[^abcdefghijklmnopqrstuvwxyz]", "");
@@ -133,15 +136,18 @@ public class EvilHangman {
                         System.out.println("\nOops! The letter " + guess + " is not in the word!");
                         stage++;
                     }
-        
-                    print();
                 }
             }
             
             if (gameOver() == 1) {
                 System.out.println("\nCongratulations! You've succeeded at Hangman!");
             } else if (gameOver() == 2) {
-                System.out.println("\nYou lost! The word was " + word + ".");
+                System.out.print("\nYou lost!");
+                if (word != null) {
+                    System.out.println("The word was " + word + ".");
+                } else {
+                    System.out.println("");
+                }
             }
 
             System.out.println("Play again? (yes or no)");
@@ -161,18 +167,22 @@ public class EvilHangman {
     }
     
     public static int gameOver() {
-        int game = 1;
+        // int game = 1;
+        
+        if (stage == figure.getNumStages() - 1) {
+            // game = 2;
+            return 2;
+        }
+
         for (String letter : resultLetters) {
             if (letter.equals("_")) {
-                game = 0;
+                // game = 0;
+                return 0;
             }
         }
 
-        if (stage == figure.getNumStages() - 1) {
-            game = 2;
-        }
-
-        return game;
+        // return game;
+        return 1;
     }
 
     public static void evilPrint() {
@@ -180,8 +190,10 @@ public class EvilHangman {
 
         System.out.println("Used Letters:");
         for (String letter : usedLetters) {
-            System.out.println(letter);
+            System.out.print(letter);
         }
+
+        System.out.println("");
     }
 
     public static void print() {
