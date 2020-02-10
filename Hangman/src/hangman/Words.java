@@ -34,4 +34,8 @@ public class Words {
 
         return word;
     }
+
+    public String[] getWordList() {
+        return words;
+    }
 }

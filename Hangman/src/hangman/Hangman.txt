@@ -6,22 +6,12 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Hangman {
-    private Figure figure;
-    private Words words;
-    private Scanner input;
-    
-    private int stage;
-    private String word;
-    private ArrayList<String> usedLetters = new ArrayList<String>();
-    private List<String> resultLetters = new ArrayList<String>();
+    public void run(Figure figure, Words words, Scanner input) {
+        int stage;
+        String word;
+        ArrayList<String> usedLetters = new ArrayList<String>();
+        List<String> resultLetters = new ArrayList<String>();
 
-    public Hangman(Figure figure, Words words, Scanner input) {
-        this.figure = figure;
-        this.words = words;
-        this.input = input;
-    }
-
-    public void run() {
         stage = 0;
         word = words.getRandomWord();
         
@@ -33,9 +23,9 @@ public class Hangman {
             resultLetters.add("_");
         }
 
-        print();
+        print(figure, stage, resultLetters, usedLetters);
         
-        while (gameOver() == 0) {
+        while (gameOver(resultLetters, stage, figure) == 0) {
             System.out.println("Guess a letter (or the word):");
             String guess = input.nextLine().toLowerCase().replaceAll("[^abcdefghijklmnopqrstuvwxyz]", "");
             
@@ -49,7 +39,7 @@ public class Hangman {
             } else if (guess.length() > 1) {
                 System.out.println("\nI'm sorry, that's not the word.");
                 stage++;
-                print();
+                print(figure, stage, resultLetters, usedLetters);
             } else {
                 usedLetters.add(guess);
 
@@ -68,32 +58,33 @@ public class Hangman {
                     stage++;
                 }
     
-                print();
+                print(figure, stage, resultLetters, usedLetters);
             }
         }
         
-        if (gameOver() == 1) {
+        if (gameOver(resultLetters, stage, figure) == 1) {
             System.out.println("\nCongratulations! You've succeeded at Hangman!");
-        } else if (gameOver() == 2) {
+        } else if (gameOver(resultLetters, stage, figure) == 2) {
             System.out.println("\nYou lost! The word was " + word + ".");
         }
     }
 
-    public int gameOver() {
-        if (stage == figure.getNumStages() - 1) {
-            return 2;
-        }
-
+    public int gameOver(List<String> resultLetters, int stage, Figure figure) {
+        int game = 1;
         for (String letter : resultLetters) {
             if (letter.equals("_")) {
-                return 0;
+                game = 0;
             }
         }
 
-        return 1;
+        if (stage == figure.getNumStages() - 1) {
+            game = 2;
+        }
+
+        return game;
     }
 
-    public void print() {
+    public void print(Figure figure, int stage, List<String> resultLetters, ArrayList<String> usedLetters) {
         System.out.println(figure.print(stage));
         
         System.out.println("\nWord:");
