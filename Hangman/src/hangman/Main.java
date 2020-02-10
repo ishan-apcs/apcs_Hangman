@@ -48,7 +48,7 @@ public class Main {
                 playAgain = input.nextLine().toLowerCase().replaceAll("[^yesno]", "");
             }
 
-            if (playAgain.equals("yes")) {
+            if (playAgain.equals("yes") || playAgain.equals("y")) {
                 run = true;
             } else {
                 run = false;
